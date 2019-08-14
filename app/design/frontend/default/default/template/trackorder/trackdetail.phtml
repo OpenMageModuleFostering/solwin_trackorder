@@ -1,0 +1,457 @@
+<?php
+$order = $this->getTrackOrder();
+
+$shipTrack = array();
+if ($order) {
+    $shipments = $order->getShipmentsCollection();
+    foreach ($shipments as $shipment) {
+        $increment_id = $shipment->getIncrementId();
+        $tracks = $shipment->getTracksCollection();
+
+        $trackingInfos = array();
+        foreach ($tracks as $track) {
+            $trackingInfos[] = $track->getNumberDetail();
+        }
+        $shipTrack[$increment_id] = $trackingInfos;
+    }
+}
+$order_id = $order['increment_id'];
+$order_item = Mage::getModel("sales/order")->loadByIncrementId($order_id);
+$items = $order_item->getItemsCollection();
+$order_details = Mage::getModel('sales/order')->loadByIncrementId($order_id);
+$colspan = $rowspan = 2;
+
+// Get shipping method
+$shipping_method = $order_details->_data["shipping_description"];
+
+// Get ship-to address information
+$shipping_address_data = $order_details->getShippingAddress();
+$billingAddress = $order_details->getBillingAddress();
+
+//country codes
+$shippcode = $order_details->getShippingAddress()->getCountry();
+$billcode = $order_details->getBillingAddress()->getCountry();
+
+$paymentmethod = $order->getPayment()->getMethodInstance()->getTitle();
+//credit card information
+$payarry = $order->getPayment()->debug();
+
+foreach (Mage::getSingleton('payment/config')->getCcTypes() as $code => $name) {
+    if ($payarry['cc_type'] == $code) {
+        $options = $name;
+    }
+}
+$pending = Mage::getStoreConfig('trackorder/trackorder_orderstatus/pending');
+$processing = Mage::getStoreConfig('trackorder/trackorder_orderstatus/processing');
+$complete = Mage::getStoreConfig('trackorder/trackorder_orderstatus/complete');
+$canceled = Mage::getStoreConfig('trackorder/trackorder_orderstatus/canceled');
+$closed = Mage::getStoreConfig('trackorder/trackorder_orderstatus/closed');
+
+$pending_class = $processing_class = $complete_pclass = $canceled_class = $closed_class = "";
+if ($order->getStatusLabel() == 'Pending') {
+    $pending_class = 'active_order';
+}
+if ($order->getStatusLabel() == 'Processing') {
+    $processing_class = 'active_order';
+}
+if ($order->getStatusLabel() == 'Complete') {
+    $complete_pclass = 'active_order';
+}
+if ($order->getStatusLabel() == 'Canceled') {
+    $canceled_class = 'active_order';
+}
+if ($order->getStatusLabel() == 'Closed') {
+    $closed_class = 'active_order';
+}
+?> 
+<?php $_results = $shipTrack; ?>
+<div class="page-title title-buttons">
+    <h1><?php echo $this->__('Tracking Information'); ?></h1>
+</div>
+
+<div class="statuses">
+    <span class="<?php echo $pending_class; ?>"><?php
+        if ($pending)
+            echo $pending;
+        else
+            echo "Pending";
+        ?></span>
+    <span class="<?php echo $processing_class; ?>"><?php
+        if ($processing)
+            echo $processing;
+        else
+            echo 'Processing';
+        ?></span>
+    <span class="<?php echo $complete_pclass; ?>"><?php
+        if ($complete)
+            echo $complete;
+        else
+            echo 'Complete';
+        ?></span>
+    <span class="<?php echo $canceled_class; ?>"><?php
+        if ($canceled)
+            echo $canceled;
+        else
+            echo 'Canceled';
+        ?></span>
+    <span class="<?php echo $closed_class; ?>"><?php
+        if ($closed)
+            echo $closed;
+        else
+            echo Closed;
+        ?></span>
+</div>
+
+<p><?php echo $this->__("Your Order Status is :") ?> <strong><?php echo $order->getStatusLabel() ?></strong></p>
+
+<?php if (sizeof($_results) > 0): ?>
+    <?php foreach ($_results as $shipid => $_result): ?>
+        <?php if ($shipid): ?>
+            <h4><?php echo $this->__('Shipment #') . $shipid; ?></h4>
+        <?php endif; ?>
+        <?php if (sizeof($_result) > 0): ?>
+            <?php
+            $rowCount = sizeof($_result);
+            $counter = 1;
+            ?>
+            <?php foreach ($_result as $track): ?>
+                <table class="data-table track-data-table">
+                    <col width="15%" />
+                    <col />
+                    <tbody>
+                        <?php if (is_object($track)): ?>
+                            <tr>
+                                <th><?php echo $this->__('Tracking Number:'); ?></th>
+                                <td><?php echo $track->getTracking(); ?></td>
+                            </tr>
+                            <?php if ($track->getCarrierTitle()): ?>
+                                <tr>
+                                    <th><?php echo $this->__('Carrier:'); ?></th>
+                                    <td><?php echo $track->getCarrierTitle(); ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($track->getErrorMessage()): ?>
+                                <tr>
+                                    <th><?php echo $this->__('Error:'); ?></th>
+                                    <td class="error"><?php if ((bool) Mage::getStoreConfig('contacts/contacts/enabled')) : ?><a href="<?php echo $this->getUrl('contacts') ?>" onclick="this.target = '_blank'"><?php echo $this->__('Click here') ?></a><?php
+                                            echo $this->__('  to get details or ');
+                                        endif;
+                                        echo $this->__('email us at ');
+                                        ?><a href="mailto:<?php echo Mage::getStoreConfig('trans_email/ident_support/email'); ?>"><?php echo Mage::getStoreConfig('trans_email/ident_support/email') ?></a>
+
+                                    </td>
+                                </tr>
+                            <?php elseif ($track->getTrackSummary()): ?>
+                                <tr>
+                                    <th><?php echo $this->__('Info:'); ?></th>
+                                    <td><?php echo $track->getTrackSummary(); ?></td>
+                                </tr>
+                            <?php elseif ($track->getUrl()): ?>
+                                <tr>
+                                    <th><?php echo $this->__('Track:'); ?></th>
+                                    <td><a href="<?php echo $track->getUrl(); ?>" onclick="this.target = '_blank'"><?php echo $this->__('Click here to get details'); ?></a></td>
+                                </tr>
+                            <?php else: ?>
+                                <?php if ($track->getStatus()): ?>
+                                    <tr>
+                                        <th><?php echo $this->__('Status:'); ?></th>
+                                        <td><?php echo $track->getStatus(); ?></td>
+                                    </tr>
+                                <?php endif; ?>
+
+                                <?php if ($track->getDeliverydate()): ?>
+                                    <tr>
+                                        <th><?php echo $this->__('Delivered on:'); ?></th>
+                                        <td><?php echo $this->formatDeliveryDateTime($track->getDeliverydate(), $track->getDeliverytime()); ?></td>
+                                    </tr>
+                                <?php endif; ?>
+
+                                <?php if ($track->getSignedby()): ?>
+                                    <tr>
+                                        <th><?php echo $this->__('Signed by:'); ?></th>
+                                        <td><?php echo $track->getSignedby(); ?></td>
+                                    </tr>
+                                <?php endif; ?>
+
+                                <?php if ($track->getDeliveryLocation()): ?>
+                                    <tr>
+                                        <th><?php echo $this->__('Delivered to:'); ?></th>
+                                        <td><?php echo $track->getDeliveryLocation(); ?></td>
+                                    </tr>
+                                <?php endif; ?>
+
+                                <?php if ($track->getShippedDate()): ?>
+                                    <tr>
+                                        <th><?php echo $this->__('Shipped or billed on:'); ?></th>
+                                        <td><?php echo $track->getShippedDate(); ?></td>
+                                    </tr>
+                                <?php endif; ?>
+
+                                <?php if ($track->getService()): ?>
+                                    <tr>
+                                        <th><?php echo $this->__('Service Type:'); ?></th>
+                                        <td><?php echo $track->getService(); ?></td>
+                                    </tr>
+                                <?php endif; ?>
+
+                                <?php if ($track->getWeight()): ?>
+                                    <tr>
+                                        <th><?php echo $this->__('Weight:'); ?></th>
+                                        <td><?php echo $track->getWeight(); ?></td>
+                                    </tr>
+                                <?php endif; ?>
+
+                            <?php endif; ?>
+                        <?php elseif (isset($track['title']) && isset($track['number']) && $track['number']): ?>
+                            <!--if the tracking is custom value-->
+                            <tr>
+                                <th><?php echo ($track['title'] ? $this->escapeHtml($track['title']) : $this->__('N/A')); ?>:</th>
+                                <td><?php echo (isset($track['number']) ? $this->escapeHtml($track['number']) : ''); ?></td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+
+                <?php if (is_object($track) && sizeof($track->getProgressdetail()) > 0): ?>
+                    <table class="data-table" id="track-history-table-<?php echo $track->getTracking(); ?>">
+                        <col />
+                        <col width="1" />
+                        <col width="1" />
+                        <col />
+                        <thead>
+                            <tr>
+                                <th><?php echo $this->__('Location') ?></th>
+                                <th><?php echo $this->__('Date') ?></th>
+                                <th><?php echo $this->__('Local Time') ?></th>
+                                <th><?php echo $this->__('Description') ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($track->getProgressdetail() as $_detail): ?>
+                                <?php $_detailDate = (isset($_detail['deliverydate']) ? $this->formatDeliveryDate($_detail['deliverydate']) : '') ?>
+                                <?php $_detailTime = (isset($_detail['deliverytime']) ? $this->formatDeliveryTime($_detail['deliverytime'], $_detailDate) : '') ?>
+                                <tr>
+                                    <td><?php echo (isset($_detail['deliverylocation']) ? $_detail['deliverylocation'] : ''); ?></td>
+                                    <td><?php echo $_detailDate ?></td>
+                                    <td><?php echo $_detailTime ?></td>
+                                    <td><?php echo (isset($_detail['activity']) ? $_detail['activity'] : '') ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <script type="text/javascript">decorateTable('track-history-table-<?php echo $track->getTracking(); ?>');</script>
+                <?php endif; ?>
+                <?php if ($counter != $rowCount): ?>
+                <?php endif; ?>
+                <?php $counter++; ?>
+
+            <?php endforeach; ?>
+            <!--end for each tracking information-->
+        <?php else: ?>
+            <p><?php echo $this->__('There is no tracking available for this shipment.'); ?></p>
+        <?php endif; ?>
+
+    <?php endforeach; ?>
+<?php else: ?>
+    <div><?php echo $this->__('There is no tracking available.'); ?></div>
+<?php endif; ?>
+
+<div class="myorder-wrapper">
+    <div class="myorder">
+        <h3>Order Information</h3>
+        <?php if ($this->getCanViewOrder() && $this->getCanPrintOrder()) : ?>
+            <?php echo $this->__('<a class="print-icon" href="%s" onclick="this.target=\'_blank\'">here to print</a>', $this->getPrintUrl()) ?>
+            <?php // echo $this->getChildHtml()      ?>
+        <?php endif; ?>
+        <div class="inner_content">
+            <label> Date<span>:</span></label>
+            <span> <?php echo $order_item->getCreatedAtStoreDate(); ?></span>
+        </div>
+        <div class="inner_content">
+            <label>Order ID<span>:</span></label> 
+            <span><?php echo $order_id; ?></span>
+        </div>
+        <div class="inner_content">
+            <label>Order Total<span>:</span></label>
+            <span> <?php echo $order_item->getGrandTotal(); ?></span>
+        </div>
+    </div>
+    <div class="payment_method">
+        <h3>Payment & Shipping Information</h3>
+        <div class="inner_content">
+            <label><b>Shipping Method</b><span>:</span></label>
+            <span> <?php echo $shipping_method; ?></span> 
+        </div>
+        <div class="inner_content">
+            <label><b>Payment Method</b><span>:</span> </label>
+            <span><?php echo $paymentmethod; ?></span>
+        </div>
+        <?php if ($paymentmethod == 'Credit Card (saved)') { ?>
+            <div class="inner_content">
+                <label>Credit Card Type<span>:</span></label>
+                <span><?php echo $options; ?></span>
+            </div>
+            <div class="inner_content">
+                <label>Credit Card Number<span>:</span></label>
+                <span><?php echo $payarry['cc_last4']; ?></span>
+            </div>
+            <div class="inner_content">
+                <label>Credit Card Owner<span>:</span></label>
+                <span><?php echo $payarry['cc_owner']; ?></span>
+            </div>
+        <?php } ?>
+    </div>
+</div>
+<div class="myorder-wrapper">
+    <div class="order_summery">
+        <h3>Shipping Address</h3>
+        <div class="inner_content">
+            <label>Name<span>:</span></label>
+            <span><?php echo $shipping_address_data['firstname'] . " " . $shipping_address_data['lastname']; ?></span>
+        </div>
+        <div class="inner_content">
+            <label>Delivery Address<span>:</span></label>
+            <span> <?php echo $shipping_address_data['street']; ?></span> 
+        </div>
+        <div class="inner_content">
+            <label>Delivery City<span>:</span> </label>
+            <span> <?php echo $shipping_address_data['city']; ?></span> 
+        </div>
+        <div class="inner_content">
+            <label>State<span>:</span></label>
+            <span>  <?php echo $shipping_address_data['region']; ?></span> 
+        </div>
+        <div class="inner_content">
+            <label>Country<span>:</span></label>
+            <span>  <?php echo Mage::app()->getLocale()->getCountryTranslation($shippcode); ?></span> 
+        </div>
+        <div class="inner_content">
+            <label>Postcode<span>:</span></label> 
+            <span> <?php echo $shipping_address_data['postcode']; ?></span> 
+        </div>
+        <div class="inner_content">
+            <label>Telephone<span>:</span></label>
+            <span> <?php echo $shipping_address_data['telephone']; ?></span> 
+        </div>
+    </div>
+    <div class="order_summery">
+        <h3>Billing Address</h3>
+        <div class="inner_content">
+            <label>Name<span>:</span></label> 
+            <span><?php echo $billingAddress['firstname'] . " " . $billingAddress['lastname']; ?></span>
+        </div>
+        <div class="inner_content">
+            <label>Delivery Address<span>:</span></label>
+            <span><?php echo $billingAddress['street']; ?></span>
+        </div>
+        <div class="inner_content">
+            <label>Delivery City<span>:</span></label>
+            <span><?php echo $billingAddress['city']; ?></span>
+        </div>
+        <div class="inner_content">
+            <label>State<span>:</span></label>
+            <span><?php echo $billingAddress['region']; ?></span>
+        </div>
+        <div class="inner_content">
+            <label>Country<span>:</span></label>
+            <span><?php echo Mage::app()->getLocale()->getCountryTranslation($billcode); ?></span>
+        </div>
+        <div class="inner_content">
+            <label>Postcode<span>:</span></label>
+            <span><?php echo $billingAddress['postcode']; ?></span>
+        </div>
+        <div class="inner_content">
+            <label>Telephone<span>:</span> </label>
+            <span><?php echo $billingAddress->getTelephone(); ?></span>
+        </div>
+    </div>
+</div>
+<div id="checkout-review-table-wrapper">
+    <table class="data-table" id="checkout-review-table">
+        <thead>
+            <tr>
+                <th rowspan="<?php echo $rowspan ?>"><?php echo $this->__('Product Name') ?></th>
+                <th class="a-center"><?php echo $this->__('Unit Price') ?></th>
+                <th class="a-center"><?php echo $this->__('Qty') ?></th>
+                <th class="a-center"><?php echo $this->__('SKU') ?></th>
+                <th class="a-center"><?php echo $this->__('Sub Total') ?></th>
+            </tr>
+        </thead>
+        <?php echo $this->getChildHtml('totals'); ?>
+        <tbody>
+            <?php
+            foreach ($items as $i):
+                $_product = Mage::getModel('catalog/product')->load($i->getProductId());
+                $options = $i->getProductOptions();
+                ?>
+                <tr>
+                    <td rowspan="1">
+                        <img class="product_img" src="<?php echo Mage::helper('catalog/image')->init($_product, 'thumbnail')->resize(75); ?>" alt="product-img" />
+                        <?php
+                        echo $i->getName();
+
+                        $customOptions = $options['options'];
+                        if (!empty($customOptions)) {
+                            foreach ($customOptions as $option) {
+                                ?>
+                                <span class="bottom-align">
+                                    <?php
+                                    echo '<b>' . $option['label'] . '</b> :';
+                                    echo $optionValue = $option['value'];
+                                    ?></span>                                
+                                <?php
+                            }
+                        }
+                        ?>
+                    </td>
+                    <td><?php echo $this->helper('checkout')->formatPrice($i->getPrice()); ?></td>
+                    <td><?php echo $i->getQtyOrdered(); ?></td>
+                    <td><?php echo $i->getSku(); ?></td>
+                    <td><?php echo $this->helper('checkout')->formatPrice($i->getRowTotal()); ?></td>
+                </tr>
+            <?php endforeach ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="a-right">
+                    <small>SubTotal:</small>
+                </td>
+                <td colspan="2" class="a-right">
+                    <small><?php echo $this->helper('checkout')->formatPrice($order_item->getSubtotal()); ?></small>
+                </td>
+            </tr>
+            <tr class="shipping">
+                <td class="a-right" colspan="4">
+                    <?php echo $this->__('Shipping & Handling(' . $order_item->getShippingDescription() . ')'); ?>
+                </td>
+                <td colspan="2" class="last a-right">
+                    <span class="subtotlal-value">
+                        <?php echo $this->helper('checkout')->formatPrice($order_item->getShippingInclTax()); ?>
+                    </span>
+                </td>
+            </tr>
+            <?php if ($order_item->getDiscountAmount() != 0): ?>
+                <tr class="discount">
+                    <td class="a-right" colspan="4">
+                        <?php echo $this->__('Discount'); echo  $order_item->getDiscountDescription() ? '('.$order_item->getDiscountDescription() .')' : "";  ?>
+                    </td>
+                    <td class="last a-right">
+                        <span class="subtotlal-value">
+                            <?php echo $this->helper('checkout')->formatPrice($order_item->getDiscountAmount()); ?>
+                        </span>
+                    </td>
+                </tr><?php
+            endif;
+            ?>
+            <tr class="grand_total last">
+                <td class="a-right" colspan="4"><strong><?php echo $this->__('Total') ?></strong></td>
+                <td colspan="2" class="last a-right">
+                    <span class="subtotlal-value">
+                        <strong><?php echo $this->helper('checkout')->formatPrice($order_item->getGrandTotal()); ?></strong>
+                    </span>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

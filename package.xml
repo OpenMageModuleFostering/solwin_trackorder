@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+    <name>Solwin_Trackorder</name>
+    <version>1.0.0</version>
+    <stability>stable</stability>
+    <license uri="http://opensource.org/licenses/osl-3.0.php">OSL v3.0</license>
+    <channel>community</channel>
+    <extends/>
+    <summary>Simple Order trcking extension which provides all the details including billing address, shipping address, order item details &amp;amp; order status.</summary>
+    <description>Simple Order trcking extension which will use ajax to display details and speed up your website.&#xD;
+You just need to provide order id and email address and all the details about your order will be displayed.&#xD;
+You can also change order status labels from admin side.&#xD;
+Also Provide link in header, footer and menu. &#xD;
+Provides a widget in left or right column.</description>
+    <notes>Simple ajax order tracking informaion. No need to load whole page. You can change order status labels also from admin side.</notes>
+    <authors><author><name>Sanjay Dabhoya</name><user>solwin</user><email>stdabhoya@yahoo.com</email></author></authors>
+    <date>2015-07-30</date>
+    <time>07:38:28</time>
+    <contents><target name="mageetc"><dir name="modules"><file name="Solwin_Trackorder.xml" hash="1d4c1fa2a55d4c79c27d66c396b80998"/></dir></target><target name="magecommunity"><dir name="Solwin"><dir name="Trackorder"><dir name="Block"><file name="Trackorder.php" hash="8960d861fab6e84abf6cc902c3245168"/><file name="Trackwidget.php" hash="e068dfcb077069bcb9d7e2bf6bb717c2"/><file name="View.php" hash="59fac7eb462cecfb7b3a86cd2ef90b35"/></dir><dir name="Helper"><file name="Data.php" hash="594d291dcf63ad86091d34d4e801257e"/></dir><dir name="Model"><file name="Observer.php" hash="32803987ff87e5f1efbeac7d73369517"/><dir name="System"><dir name="Config"><dir name="Frontend"><file name="Widgetsettings.php" hash="1882f66995f901616208de42dcb33aa3"/></dir></dir></dir></dir><dir name="controllers"><file name="IndexController.php" hash="1d8fd03bf4c63052c5108863b301eaa5"/></dir><dir name="etc"><file name="config.xml" hash="78a58669ff8c0fe3134f5f1d6533ef9b"/><file name="system.xml" hash="e4b312427b936c580688e5f3af50b14b"/><file name="widget.xml" hash="ff61595a908d0ce4c846f5b330ce5dd7"/></dir><dir name="sql"><dir name="trackorder_setup"><file name="mysql4-install-1.0.0.php" hash="4f08e9d298368363dcf13fd0a9cc9eb8"/></dir></dir></dir></dir></target><target name="magedesign"><dir name="frontend"><dir name="default"><dir name="default"><dir name="template"><dir name="trackorder"><file name="info.phtml" hash="ab2f5760c95196aaea2470f5869a2bbb"/><dir><dir name="order"><file name="items.phtml" hash="dd7194ebb4ad6e57d489e044dbfb55e3"/></dir><dir name="shipment"><file name="items.phtml" hash="11172a03f80ac140f597af87e5c139a9"/></dir></dir><file name="trackdetail.phtml" hash="d1ffb43844b3e335d7451c2f94f85355"/><file name="trackorder.phtml" hash="2939541a8537a23c78cbe5f1ed49f824"/><file name="trackorderlink.phtml" hash="55338259c837d10814a56ed3d6cc1d02"/><file name="trackwidget.phtml" hash="78d940b9765d109236c24ed6d95fdb22"/><file name="view.phtml" hash="71f72f80ecf948a65cba97cbd7ce7e26"/></dir></dir><dir name="layout"><file name="trackorder.xml" hash="35a865a03fb3103b042a5324359997e9"/></dir></dir></dir></dir></target><target name="mageskin"><dir name="frontend"><dir name="default"><dir name="default"><dir name="trackorder"><dir name="css"><file name="trackorder.css" hash="7d5ade0a2d7ab4c7206a05f9ae0f6b01"/></dir></dir></dir></dir></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.3.0</min><max>6.0.0</max></php></required></dependencies>
+</package>

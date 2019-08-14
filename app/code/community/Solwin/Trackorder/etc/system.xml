@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+    <tabs>
+        <solwin translate="label" module="trackorder">
+            <label>Solwin</label>
+            <sort_order>400</sort_order>
+        </solwin>
+    </tabs>
+    <sections>
+        <trackorder translate="label" module="trackorder">
+            <label>Track Order</label>
+            <tab>solwin</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>10</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <trackorder_general translate="label">
+                    <label>General</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <enabled translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to enable this feature.</comment>
+                        </enabled>
+                        <toplinks translate="label">
+                            <label>Display in Top Links</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to allow for Top Links.</comment>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </toplinks>
+                        <topmenu translate="label">
+                            <label>Display in Top Menu</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to allow for Top Menu.</comment>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </topmenu>
+                        <footerlink translate="label">
+                            <label>Display in Footer Links</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to allow for Footer Links.</comment>
+                            <depends>
+                                <enabled>1</enabled>
+                            </depends>
+                        </footerlink>
+                        <show_widget translate="label">
+                            <label>Show TrackOrder Widget</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>trackorder/system_config_frontend_widgetsettings</source_model>
+                            <sort_order>250</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Choose column for widget to appear</comment>
+                        </show_widget>
+                    </fields>
+                </trackorder_general>
+                <trackorder_orderstatus translate="label">
+                    <label>Order Status Label</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>.
+                    <comment>Give label which you want to display on front end for particular status.</comment>
+                    <fields>
+                        <pending translate="label">
+                            <label>Pending Status Label</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </pending>
+                        <processing translate="label">
+                            <label>Processing Status Label</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </processing>
+                        <complete translate="label">
+                            <label>Complete Status Label</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </complete>
+                        <canceled translate="label">
+                            <label>Canceled Status Label</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </canceled>
+                        <closed translate="label">
+                            <label>Closed Status Label</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </closed>
+                    </fields>
+                </trackorder_orderstatus>
+            </groups>
+        </trackorder>
+    </sections>
+</config>
