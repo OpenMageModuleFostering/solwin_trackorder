@@ -1,7 +1,7 @@
 {
-    "name": "OpenMageModuleFostering\/Solwin_Trackorder",
+    "name": "openmage-module-fostering\/solwin_trackorder",
     "type": "magento-module",
-    "license": "OSL-v3.0",
+    "license": "OSL-3.0",
     "homepage": "",
     "description": "Simple Order trcking extension which provides all the details including billing address, shipping address, order item details &amp; order status.",
     "authors": [
